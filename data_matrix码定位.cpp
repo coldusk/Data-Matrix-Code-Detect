@@ -14,7 +14,7 @@ double distance(Point2f p1, Point2f p2) {
 
 int main(int argc, char** argv) {
 	Mat image, enhance;
-	image = imread("D:\\华威科暑期实习\\任务二\\测试图像20240719\\3.bmp");//输入待检测图片的文件地址
+	image = imread("image_path");//输入待检测图片的文件地址
 	if (!image.data) {
 		cout << "could not load image..4." << endl;
 		return -1;
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	imshow("强化后图片", enhance);
+	/*imshow("强化后图片", enhance);*/
     // 将图像转换为灰度图
     Mat gray;
     cvtColor(enhance, gray, COLOR_BGR2GRAY);
@@ -99,12 +99,12 @@ int main(int argc, char** argv) {
         }
         averageDistance /= clusterPoints.size();
 
-        // 过滤出有效的点
+        // 过滤出有效的点,只有到聚类中心的距离小于各点到聚类中心点平均距离的1.1倍的点才能作为有效点
         for (const auto& point : clusterPoints) {
             if (distance(point, clusterCenter) <= 1.1 * averageDistance) {
                 validPoints.push_back(point);
                 // 标记有效角点
-                /*circle(src, point, 3, colors[i], -1);*/
+                /*circle(image, point, 3, colors[i], -1);*/
             }
         }
 
@@ -113,8 +113,8 @@ int main(int argc, char** argv) {
         float radius;
         if (!validPoints.empty()) {
             minEnclosingCircle(validPoints, center, radius);
-            // 绘制最小圆
-            circle(image, center, radius +20, colors[i], 2);
+            // 绘制最小圆，将最小圆半径扩大10%再画
+            circle(image, center, radius*1.1, colors[i], 2);
         }
     }
 
